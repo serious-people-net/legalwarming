@@ -28,13 +28,13 @@
                 if (measure) measure.style.display = 'none';
                 if (svgElement) svgElement.style.display = 'none';
                 
-                // Get the text content and styling
-                const textContent = config.marqueeItems.map(item => item.text).join(' • ');
+                // Get the text content and styling (remove dots)
+                const textContent = config.marqueeItems.map(item => item.text).join('');
                 const fontSize = config.textSize ? `${config.textSize.value}${config.textSize.unit}` : '2.8rem';
                 
-                // Create repeating text for seamless scrolling
-                const baseText = textContent + ' • ';
-                const repeatedText = new Array(6).fill(baseText).join(''); // 6 repetitions should be enough
+                // Create repeating text for seamless scrolling (no dots, just spaces)
+                const baseText = textContent + '    '; // Add spacing between repetitions
+                const repeatedText = new Array(15).fill(baseText).join(''); // More repetitions to ensure coverage
                 
                 // Clear track and setup for animation
                 track.innerHTML = '';
@@ -43,31 +43,27 @@
                     width: 100%;
                     height: 100%;
                     overflow: hidden;
-                    display: flex;
-                    align-items: center;
+                    display: block;
+                    white-space: nowrap;
                 `;
                 
-                // Create two identical scrolling containers for seamless loop
-                const container1 = document.createElement('div');
-                const container2 = document.createElement('div');
+                // Create a single scrolling container (simpler approach)
+                const scrollContainer = document.createElement('div');
+                scrollContainer.className = 'marquee-scroll-container';
+                scrollContainer.style.cssText = `
+                    display: inline-block;
+                    white-space: nowrap;
+                    will-change: transform;
+                    font-family: neue-haas-grotesk-display, var(--heading-font-font-family, sans-serif);
+                    font-size: ${fontSize};
+                    font-weight: 700;
+                    line-height: 1.2;
+                    color: inherit;
+                    letter-spacing: -0.01em;
+                `;
+                scrollContainer.textContent = repeatedText;
                 
-                [container1, container2].forEach((container, index) => {
-                    container.className = `marquee-scroll-container marquee-container-${index + 1}`;
-                    container.style.cssText = `
-                        display: inline-block;
-                        white-space: nowrap;
-                        will-change: transform;
-                        font-family: neue-haas-grotesk-display, var(--heading-font-font-family, sans-serif);
-                        font-size: ${fontSize};
-                        font-weight: 400;
-                        line-height: 1.2;
-                        color: inherit;
-                        letter-spacing: -0.01em;
-                        padding-right: 2em;
-                    `;
-                    container.textContent = repeatedText;
-                    track.appendChild(container);
-                });
+                track.appendChild(scrollContainer);
                 
                 // Add CSS animations if not already present
                 if (!document.getElementById('marquee-animations')) {
@@ -79,13 +75,13 @@
                                 transform: translateX(0);
                             }
                             100% {
-                                transform: translateX(-100%);
+                                transform: translateX(-66.666%);
                             }
                         }
                         
                         @keyframes marqueeScrollRight {
                             0% {
-                                transform: translateX(-100%);
+                                transform: translateX(-66.666%);
                             }
                             100% {
                                 transform: translateX(0);
@@ -117,6 +113,7 @@
                         
                         html:not(.wf-loading) .marquee-scroll-container {
                             font-family: neue-haas-grotesk-display, sans-serif !important;
+                            font-weight: 700 !important;
                         }
                     `;
                     document.head.appendChild(style);
@@ -125,29 +122,22 @@
                 // Calculate and apply animation
                 function updateAnimation() {
                     const containerWidth = track.offsetWidth;
-                    const textWidth = container1.offsetWidth;
+                    const textWidth = scrollContainer.offsetWidth;
                     
-                    // Calculate duration based on speed and text width
-                    const baseDuration = textWidth / (animationSpeed * 80);
+                    // Calculate duration based on text width and speed
+                    const baseDuration = textWidth / (animationSpeed * 100);
                     
-                    // Position the second container right after the first one
-                    container2.style.transform = `translateX(${textWidth}px)`;
-                    
-                    // Apply animation to both containers
-                    [container1, container2].forEach(container => {
-                        if (animationDirection === 'left') {
-                            container.style.animation = `marqueeScrollLeft ${baseDuration}s linear infinite`;
-                        } else {
-                            container.style.animation = `marqueeScrollRight ${baseDuration}s linear infinite`;
-                        }
-                    });
+                    // Apply animation
+                    if (animationDirection === 'left') {
+                        scrollContainer.style.animation = `marqueeScrollLeft ${baseDuration}s linear infinite`;
+                    } else {
+                        scrollContainer.style.animation = `marqueeScrollRight ${baseDuration}s linear infinite`;
+                    }
                 }
                 
                 // Initialize animation immediately and ensure it shows
-                container1.style.opacity = '1';
-                container1.style.visibility = 'visible';
-                container2.style.opacity = '1';
-                container2.style.visibility = 'visible';
+                scrollContainer.style.opacity = '1';
+                scrollContainer.style.visibility = 'visible';
                 
                 // Initialize animation after a short delay to ensure proper measurement
                 setTimeout(() => {
