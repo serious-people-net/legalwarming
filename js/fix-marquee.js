@@ -56,7 +56,7 @@
                     will-change: transform;
                     font-family: neue-haas-grotesk-display, var(--heading-font-font-family, sans-serif);
                     font-size: ${fontSize};
-                    font-weight: 500;
+                    font-weight: 600;
                     line-height: 1.2;
                     color: inherit;
                     letter-spacing: -0.01em;
@@ -113,7 +113,7 @@
                         
                         html:not(.wf-loading) .marquee-scroll-container {
                             font-family: neue-haas-grotesk-display, sans-serif !important;
-                            font-weight: 500 !important;
+                            font-weight: 600 !important;
                         }
                     `;
                     document.head.appendChild(style);
