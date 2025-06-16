@@ -54,12 +54,12 @@
                     align-items: center;
                     white-space: nowrap;
                     will-change: transform;
-                    font-family: var(--heading-font-font-family, 'anzeigen-grotesk', sans-serif);
+                    font-family: neue-haas-grotesk-display, var(--heading-font-font-family, sans-serif);
                     font-size: ${fontSize};
-                    font-weight: var(--heading-font-font-weight, 400);
+                    font-weight: 400;
                     line-height: 1.2;
                     color: inherit;
-                    letter-spacing: var(--heading-font-letter-spacing, -0.01em);
+                    letter-spacing: -0.01em;
                 `;
                 scrollContainer.textContent = repeatedText;
                 
@@ -91,6 +91,19 @@
                         .marquee-scroll-container {
                             animation-timing-function: linear;
                             animation-iteration-count: infinite;
+                            opacity: 1 !important;
+                            visibility: visible !important;
+                        }
+                        
+                        /* Ensure marquee is visible during font loading */
+                        html.wf-loading .marquee-scroll-container {
+                            color: inherit !important;
+                            opacity: 1 !important;
+                            animation: none;
+                        }
+                        
+                        html:not(.wf-loading) .marquee-scroll-container {
+                            font-family: neue-haas-grotesk-display, sans-serif !important;
                         }
                     `;
                     document.head.appendChild(style);
@@ -101,8 +114,8 @@
                     const containerWidth = track.offsetWidth;
                     const textWidth = scrollContainer.scrollWidth;
                     
-                    // Calculate duration based on speed (lower speed = longer duration)
-                    const baseDuration = textWidth / (animationSpeed * 50); // Adjust multiplier for desired speed
+                    // Calculate duration based on speed (increased speed multiplier for faster scrolling)
+                    const baseDuration = textWidth / (animationSpeed * 80); // Increased from 50 to 80 for faster speed
                     
                     if (animationDirection === 'left') {
                         scrollContainer.style.animation = `marqueeScrollLeft ${baseDuration}s linear infinite`;
@@ -111,10 +124,14 @@
                     }
                 }
                 
+                // Initialize animation immediately and ensure it shows
+                scrollContainer.style.opacity = '1';
+                scrollContainer.style.visibility = 'visible';
+                
                 // Initialize animation after a short delay to ensure proper measurement
                 setTimeout(() => {
                     updateAnimation();
-                }, 100);
+                }, 50); // Reduced delay
                 
                 // Update on resize
                 let resizeTimeout;
