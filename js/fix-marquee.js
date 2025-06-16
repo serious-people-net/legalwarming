@@ -124,10 +124,10 @@
                     const containerWidth = track.offsetWidth;
                     const textWidth = scrollContainer.offsetWidth;
                     
-                    // Calculate duration for one complete cycle of the repeated text
-                    // We want the animation to move exactly half the text width to create seamless loop
-                    const singleTextWidth = textContent.length * (parseInt(fontSize) * 0.6); // Approximate character width
-                    const baseDuration = (singleTextWidth + 200) / (animationSpeed * 100); // Add padding for spacing
+                    // Calculate duration based on moving half the total text width
+                    // This creates a seamless loop since the text is highly repeated
+                    const distanceToMove = textWidth / 2;
+                    const baseDuration = distanceToMove / (animationSpeed * 50); // Reduced multiplier for more reasonable speed
                     
                     // Apply animation
                     if (animationDirection === 'left') {
