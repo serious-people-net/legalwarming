@@ -34,7 +34,7 @@
                 
                 // Create repeating text for seamless scrolling (no dots, just spaces)
                 const baseText = textContent + '    '; // Add spacing between repetitions
-                const repeatedText = new Array(15).fill(baseText).join(''); // More repetitions to ensure coverage
+                const repeatedText = new Array(100).fill(baseText).join(''); // Many more repetitions to ensure seamless loop
                 
                 // Clear track and setup for animation
                 track.innerHTML = '';
@@ -56,7 +56,7 @@
                     will-change: transform;
                     font-family: neue-haas-grotesk-display, var(--heading-font-font-family, sans-serif);
                     font-size: ${fontSize};
-                    font-weight: 700;
+                    font-weight: 500;
                     line-height: 1.2;
                     color: inherit;
                     letter-spacing: -0.01em;
@@ -75,13 +75,13 @@
                                 transform: translateX(0);
                             }
                             100% {
-                                transform: translateX(-66.666%);
+                                transform: translateX(-50%);
                             }
                         }
                         
                         @keyframes marqueeScrollRight {
                             0% {
-                                transform: translateX(-66.666%);
+                                transform: translateX(-50%);
                             }
                             100% {
                                 transform: translateX(0);
@@ -113,7 +113,7 @@
                         
                         html:not(.wf-loading) .marquee-scroll-container {
                             font-family: neue-haas-grotesk-display, sans-serif !important;
-                            font-weight: 700 !important;
+                            font-weight: 500 !important;
                         }
                     `;
                     document.head.appendChild(style);
@@ -124,8 +124,10 @@
                     const containerWidth = track.offsetWidth;
                     const textWidth = scrollContainer.offsetWidth;
                     
-                    // Calculate duration based on text width and speed
-                    const baseDuration = textWidth / (animationSpeed * 100);
+                    // Calculate duration for one complete cycle of the repeated text
+                    // We want the animation to move exactly half the text width to create seamless loop
+                    const singleTextWidth = textContent.length * (parseInt(fontSize) * 0.6); // Approximate character width
+                    const baseDuration = (singleTextWidth + 200) / (animationSpeed * 100); // Add padding for spacing
                     
                     // Apply animation
                     if (animationDirection === 'left') {
